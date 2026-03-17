@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 const testimonials = [
   {
@@ -60,23 +60,44 @@ const testimonials = [
 ];
 function Testimonials() {
   const scrollRef = useRef(null);
+  
+  // Continuous auto-scroll effect
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    let scrollPosition = 0;
+    let animationFrameId;
+    const scrollSpeed = 1; // Pixels per frame (adjust for speed)
+
+    const continuousScroll = () => {
+      if (container) {
+        scrollPosition += scrollSpeed;
+        
+        // Reset when we've scrolled through half (original set)
+        const halfWidth = container.scrollWidth / 2;
+        if (scrollPosition >= halfWidth) {
+          scrollPosition = 0;
+        }
+        
+        container.scrollLeft = scrollPosition;
+        animationFrameId = requestAnimationFrame(continuousScroll);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(continuousScroll);
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, []);
+
   const scroll = (direction) => {
     const container = scrollRef.current;
     if (!container) return;
     const scrollAmount = 420;
     if (direction === "right") {
-      const maxScroll = container.scrollWidth - container.clientWidth;
-      if (container.scrollLeft >= maxScroll - 10) {
-        container.scrollTo({ left: 0, behavior: "smooth" });
-      } else {
-        container.scrollBy({ left: scrollAmount, behavior: "smooth" });
-      }
+      container.scrollBy({ left: scrollAmount, behavior: "smooth" });
     } else {
-      if (container.scrollLeft <= 10) {
-        container.scrollTo({ left: container.scrollWidth, behavior: "smooth" });
-      } else {
-        container.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-      }
+      container.scrollBy({ left: -scrollAmount, behavior: "smooth" });
     }
   };
   return <section className="py-20 bg-white">
@@ -119,11 +140,13 @@ function Testimonials() {
 
           <div
     ref={scrollRef}
-    className="flex gap-6 overflow-x-hidden pb-6 snap-x snap-mandatory scroll-smooth"
+    className="flex gap-6 overflow-x-hidden pb-6"
+    style={{ scrollBehavior: 'auto' }}
   >
-            {testimonials.map((testimonial, index) => <div
+            {/* Render testimonials twice for seamless loop */}
+            {[...testimonials, ...testimonials].map((testimonial, index) => <div
     key={index}
-    className="group flex-shrink-0 w-[350px] md:w-[400px] flex flex-col gap-4 p-6 md:p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:bg-white hover:shadow-xl hover:border-[#FF6600]/20 transition-all duration-300 snap-start"
+    className="group flex-shrink-0 w-[350px] md:w-[400px] flex flex-col gap-4 p-6 md:p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:bg-white hover:shadow-xl hover:border-[#FF6600]/20 transition-all duration-300"
   >
                 {
     /* Author */

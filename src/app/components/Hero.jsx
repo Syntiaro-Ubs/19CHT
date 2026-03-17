@@ -1,6 +1,20 @@
 import { ArrowRight, GraduationCap } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useState, useEffect } from "react";
+import herosec3Img from "../../assets/herosec3.jpg";
+import herosec5Img from "../../assets/herosec5.webp";
+import palm2Img from "../../assets/palm2.webp";
 function Hero() {
+  const [currentImage, setCurrentImage] = useState(0);
+  const images = [herosec3Img, herosec5Img, palm2Img];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % images.length);
+    }, 5000); // Change image every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
   const navigate = useNavigate();
   const scrollToContact = () => {
     navigate("/contact");
@@ -16,15 +30,39 @@ function Hero() {
     /* Background Image */
   }
       <div className="absolute inset-0 z-0">
-        <img
-    src="https://images.unsplash.com/photo-1609466032539-214fbc49d8e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkdWJhaSUyMHNreWxpbmUlMjBidXNpbmVzcyUyMHByb2Zlc3Npb25hbCUyMG1vZGVybnxlbnwxfHx8fDE3NzMzMTE1Njl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-    alt="Dubai skyline"
-    className="w-full h-full object-cover"
-  />
+        {images.map((img, index) => (
+          <img
+            key={index}
+            src={img}
+            alt="Career Hub Technology"
+            className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
+              index === currentImage ? 'opacity-100' : 'opacity-0'
+            } object-cover`}
+            style={img === herosec3Img ? { objectPosition: '50% -10%' } : {}}
+          />
+        ))}
         {
     /* Dark Overlay */
   }
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/70 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/40 to-black/30" />
+        
+        {
+    /* Navigation Dots */
+  }
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentImage(index)}
+              className={`w-3 h-3 rounded-full transition-all ${
+                index === currentImage 
+                  ? 'bg-white w-8' 
+                  : 'bg-white/50 hover:bg-white/75'
+              }`}
+              aria-label={`Go to image ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
 
       {

@@ -280,7 +280,7 @@ function Footer() {
     href="https://www.syntiaro.com/"
     target="_blank"
     rel="noopener noreferrer"
-    className="text-white hover:text-primary transition-colors"
+    className="text-orange-500 hover:text-teal-400 active:text-teal-400 transition-colors ml-1"
   >
                 SYNTIARO
               </a>

@@ -2,11 +2,11 @@ import { GraduationCap, Globe, BookOpen, ArrowRight, CheckCircle, FileText, Doll
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { Link } from "react-router";
 import { useState } from "react";
+import oversesImg from "../../assets/overses.jpg";
 function OverseasEducation() {
   const destinations = [
     {
       country: "United Kingdom",
-      flag: "--??",
       highlights: [
         "Top-ranked Russell Group universities",
         "1-year post-study work visa",
@@ -15,7 +15,6 @@ function OverseasEducation() {
     },
     {
       country: "Canada",
-      flag: "--??",
       highlights: [
         "3-year PGWP work permit",
         "Pathway to PR & citizenship",
@@ -24,7 +23,6 @@ function OverseasEducation() {
     },
     {
       country: "Australia",
-      flag: "--??",
       highlights: [
         "World-class research institutions",
         "2-4 year graduate visa",
@@ -33,7 +31,6 @@ function OverseasEducation() {
     },
     {
       country: "Germany",
-      flag: "--??",
       highlights: [
         "Free / low-cost tuition",
         "Strong engineering programs",
@@ -42,7 +39,6 @@ function OverseasEducation() {
     },
     {
       country: "UAE / Dubai",
-      flag: "--??",
       highlights: [
         "Tax-free income after graduation",
         "Booming job market",
@@ -202,7 +198,7 @@ function OverseasEducation() {
               </div>
               <div className="relative">
                 <ImageWithFallback
-    src="https://images.unsplash.com/photo-1747836130964-a4e5e69ad619?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbnRlcm5hdGlvbmFsJTIwZWR1Y2F0aW9uJTIwZ3JhZHVhdGlvbiUyMGRpdmVyc2UlMjBzdHVkZW50c3xlbnwxfHx8fDE3NzMzNzc3MDd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+    src={oversesImg}
     alt="International education"
     className="w-full rounded-2xl"
   />

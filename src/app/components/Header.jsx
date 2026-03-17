@@ -94,14 +94,19 @@ function Header() {
             {
     /* About Us Dropdown */
   }
-            <li className="relative">
+            <li className="relative group">
               <button
+    onMouseEnter={() => setActiveDropdown("about")}
     onClick={() => toggleDropdown("about")}
     className="flex items-center gap-1 hover:text-primary transition-colors py-2"
   >
                 About Us <ChevronDown className="w-4 h-4" />
               </button>
-              {activeDropdown === "about" && <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-primary/10 py-2" onClick={() => setActiveDropdown(null)}>
+              {activeDropdown === "about" && <div 
+    className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-primary/10 py-2" 
+    onMouseLeave={() => setActiveDropdown(null)}
+    onClick={() => setActiveDropdown(null)}
+  >
                   <Link
     to="/about"
     className="block px-4 py-2 hover:bg-accent transition-colors"
@@ -150,14 +155,19 @@ function Header() {
             {
     /* Services Dropdown */
   }
-            <li className="relative">
+            <li className="relative group">
               <button
+    onMouseEnter={() => setActiveDropdown("services")}
     onClick={() => toggleDropdown("services")}
     className="flex items-center gap-1 hover:text-primary transition-colors py-2"
   >
                 Services <ChevronDown className="w-4 h-4" />
               </button>
-              {activeDropdown === "services" && <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-primary/10 py-2 max-h-[70vh] overflow-y-auto scrollbar-hide" onClick={() => setActiveDropdown(null)}>
+              {activeDropdown === "services" && <div 
+    className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-primary/10 py-2 max-h-[70vh] overflow-y-auto scrollbar-hide" 
+    onMouseLeave={() => setActiveDropdown(null)}
+    onClick={() => setActiveDropdown(null)}
+  >
                   <Link
     to="/passport-services"
     className="block px-4 py-2 hover:bg-accent transition-colors"
@@ -200,15 +210,20 @@ function Header() {
             {
     /* Foreign Language Dropdown */
   }
-            <li className="relative">
+            <li className="relative group">
               <button
+    onMouseEnter={() => setActiveDropdown("language")}
     onClick={() => toggleDropdown("language")}
     className="flex items-center gap-1 hover:text-primary transition-colors py-2"
   >
                 Foreign Language{" "}
                 <ChevronDown className="w-4 h-4" />
               </button>
-              {activeDropdown === "language" && <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-primary/10 py-2" onClick={() => setActiveDropdown(null)}>
+              {activeDropdown === "language" && <div 
+    className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-primary/10 py-2" 
+    onMouseLeave={() => setActiveDropdown(null)}
+    onClick={() => setActiveDropdown(null)}
+  >
                   <Link
     to="/german-language"
     className="block px-4 py-2 hover:bg-accent transition-colors"
@@ -233,14 +248,19 @@ function Header() {
             {
     /* All Courses Mega Menu */
   }
-            <li className="relative">
+            <li className="relative group">
               <button
+    onMouseEnter={() => setActiveDropdown("courses")}
     onClick={() => toggleDropdown("courses")}
     className="flex items-center gap-1 hover:text-primary transition-colors py-2"
   >
                 All Courses <ChevronDown className="w-4 h-4" />
               </button>
-              {activeDropdown === "courses" && <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[800px] bg-white rounded-lg shadow-xl border border-primary/10 p-6 max-h-[70vh] overflow-y-auto scrollbar-hide" onClick={() => setActiveDropdown(null)}>
+              {activeDropdown === "courses" && <div 
+    className="absolute top-full right-0 mt-2 w-[800px] bg-white rounded-lg shadow-xl border border-primary/10 p-6 max-h-[70vh] overflow-y-auto scrollbar-hide" 
+    onMouseLeave={() => setActiveDropdown(null)}
+    onClick={() => setActiveDropdown(null)}
+  >
                   <div className="grid grid-cols-4 gap-6">
                     {
     /* Mechanical CAD */
@@ -500,14 +520,19 @@ function Header() {
             {
     /* Careers Dropdown */
   }
-            <li className="relative">
+            <li className="relative group">
               <button
+    onMouseEnter={() => setActiveDropdown("careers")}
     onClick={() => toggleDropdown("careers")}
     className="flex items-center gap-1 hover:text-primary transition-colors py-2"
   >
                 Careers <ChevronDown className="w-4 h-4" />
               </button>
-              {activeDropdown === "careers" && <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-primary/10 py-2" onClick={() => setActiveDropdown(null)}>
+              {activeDropdown === "careers" && <div 
+    className="absolute top-full right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-primary/10 py-2" 
+    onMouseLeave={() => setActiveDropdown(null)}
+    onClick={() => setActiveDropdown(null)}
+  >
                   <Link
     to="/careers"
     className="block px-4 py-2 hover:bg-accent transition-colors"
