@@ -35,6 +35,9 @@ const transporter = nodemailer.createTransport({
   auth: { user: smtpUser, pass: smtpPass }
 });
 
+const MAX_RESUME_BYTES = 5 * 1024 * 1024;
+const ALLOWED_RESUME_EXTENSIONS = new Set([".pdf", ".doc", ".docx"]);
+
 async function resolveOptionalAttachment() {
   const attachPath = process.env.ATTACH_PDF_PATH;
   if (!attachPath) return null;
@@ -81,7 +84,7 @@ function asTable(rows) {
 
 const app = express();
 app.use(cors({ origin: true }));
-app.use(express.json({ limit: "1mb" }));
+app.use(express.json({ limit: "12mb" }));
 
 // Add headers to allow API connections
 app.use((req, res, next) => {
@@ -180,6 +183,81 @@ app.post("/api/franchise", async (req, res) => {
     res.json({ ok: true, messageId: info.messageId });
   } catch (err) {
     console.error("Error in /api/franchise:", err.message, err);
+    res.status(500).json({ ok: false, error: err.message || "Failed to send email" });
+  }
+});
+
+app.post("/api/job-placement", async (req, res) => {
+  try {
+    const {
+      firstName,
+      lastName,
+      email,
+      phone,
+      education,
+      message,
+      resumeFileName,
+      resumeContentType,
+      resumeBase64
+    } = req.body || {};
+
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !phone ||
+      !education ||
+      !resumeFileName ||
+      !resumeBase64
+    ) {
+      return res.status(400).json({ ok: false, error: "Missing required fields" });
+    }
+
+    const ext = path.extname(resumeFileName).toLowerCase();
+    if (!ALLOWED_RESUME_EXTENSIONS.has(ext)) {
+      return res.status(400).json({ ok: false, error: "Unsupported resume file type" });
+    }
+
+    const normalizedBase64 = String(resumeBase64).replace(/\s+/g, "");
+    const resumeBuffer = Buffer.from(normalizedBase64, "base64");
+    if (!resumeBuffer.length) {
+      return res.status(400).json({ ok: false, error: "Invalid resume file data" });
+    }
+    if (resumeBuffer.length > MAX_RESUME_BYTES) {
+      return res.status(413).json({ ok: false, error: "Resume file is too large (max 5 MB)" });
+    }
+
+    const optionalAttachment = await resolveOptionalAttachment();
+    const attachments = [
+      {
+        filename: resumeFileName,
+        content: resumeBuffer,
+        contentType: resumeContentType || undefined
+      },
+      ...(optionalAttachment ? [optionalAttachment] : [])
+    ];
+
+    const info = await transporter.sendMail({
+      from: smtpUser,
+      to: mailTo,
+      subject: `Job Placement Application: ${firstName} ${lastName}`,
+      html:
+        `<p style="font-family:Arial,sans-serif;">New job placement application received:</p>` +
+        asTable([
+          ["First Name", firstName],
+          ["Last Name", lastName],
+          ["Email", email],
+          ["Phone", phone],
+          ["Education", education],
+          ["Message (optional)", message],
+          ["Resume", resumeFileName]
+        ]),
+      attachments
+    });
+
+    res.json({ ok: true, messageId: info.messageId });
+  } catch (err) {
+    console.error("Error in /api/job-placement:", err.message, err);
     res.status(500).json({ ok: false, error: err.message || "Failed to send email" });
   }
 });

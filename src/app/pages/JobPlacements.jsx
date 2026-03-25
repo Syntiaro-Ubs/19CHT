@@ -22,6 +22,10 @@ import {
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { Link } from "react-router";
 function JobPlacements() {
+  const apiBaseUrl =
+    import.meta.env.PROD && import.meta.env.VITE_API_BASE_URL
+      ? import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, "")
+      : "";
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -31,20 +35,80 @@ function JobPlacements() {
     message: ""
   });
   const [fileName, setFileName] = useState("");
+  const [resumeFile, setResumeFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef(null);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const handleFileChange = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFileName(e.target.files[0].name);
-    }
+    const file = e.target.files?.[0] || null;
+    setResumeFile(file);
+    setFileName(file?.name || "");
   };
-  const handleSubmit = (e) => {
+  const readFileAsDataUrl = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(
-      "Thank you for your application! Our placement team will contact you within 24 hours."
-    );
+    if (isSubmitting) return;
+
+    if (!resumeFile) {
+      alert("Please upload your resume (PDF, DOC, or DOCX).");
+      return;
+    }
+    if (resumeFile.size > 5 * 1024 * 1024) {
+      alert("Resume must be 5 MB or less.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const result = await readFileAsDataUrl(resumeFile);
+      const dataUrl = typeof result === "string" ? result : "";
+      const match = dataUrl.match(/^data:(.*?);base64,(.*)$/);
+      const resumeContentType = match?.[1] || resumeFile.type || "";
+      const resumeBase64 = match?.[2];
+      if (!resumeBase64) throw new Error("Failed to read resume file.");
+
+      const res = await fetch(`${apiBaseUrl}/api/job-placement`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          resumeFileName: resumeFile.name,
+          resumeContentType,
+          resumeBase64
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data?.error || "Failed to submit application");
+      }
+
+      alert(
+        "Thank you for your application! Our placement team will contact you within 24 hours."
+      );
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        education: "",
+        message: ""
+      });
+      setFileName("");
+      setResumeFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    } catch (err) {
+      alert(err?.message || "Failed to submit application. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   const stats = [
     { value: "98%", label: "Placement Success Rate" },
@@ -411,9 +475,10 @@ function JobPlacements() {
                 <div className="flex justify-center">
                   <button
     type="submit"
-    className="bg-transparent text-[#FF6600] border-2 border-[#FF6600] px-16 py-3.5 rounded-full hover:bg-green-600 hover:border-green-600 hover:text-white active:bg-green-700 active:border-green-700 transition-colors flex items-center justify-center gap-2"
+    disabled={isSubmitting}
+    className="bg-transparent text-[#FF6600] border-2 border-[#FF6600] px-16 py-3.5 rounded-full hover:bg-green-600 hover:border-green-600 hover:text-white active:bg-green-700 active:border-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
   >
-                    Submit Application
+                    {isSubmitting ? "Submitting..." : "Submit Application"}
                   </button>
                 </div>
 

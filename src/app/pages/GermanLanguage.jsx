@@ -31,7 +31,7 @@ import Gal21 from "../../assets/Gal21.jpeg";
 import Gal22 from "../../assets/Gal22.jpeg";
 import Gal23 from "../../assets/Gal23.jpeg";
 import Gal24 from "../../assets/Gal24.jpeg";
-import germanBrochurePdf from "../../assets/German Language Brochure-5.pdf";
+import germanBrochurePdf from "../../assets/GermanLanguageBrochure-5.pdf";
 function GermanLanguage() {
   const [activeLevel, setActiveLevel] = useState(0);
   const scrollRef = useRef(null);
