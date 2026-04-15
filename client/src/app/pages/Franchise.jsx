@@ -40,9 +40,25 @@ function Franchise() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
       });
-      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(data?.error || "Failed to submit application");
+        const contentType = res.headers.get("content-type") || "";
+        let errorMessage = "";
+
+        if (contentType.includes("application/json")) {
+          const data = await res.json().catch(() => ({}));
+          errorMessage = data?.error || "";
+        } else {
+          const text = await res.text().catch(() => "");
+          errorMessage = String(text || "").trim();
+        }
+
+        if (errorMessage.startsWith("<")) errorMessage = "";
+        if (!errorMessage && res.status >= 500) {
+          errorMessage =
+            "Mail server error. Make sure the backend is running (in `server/`: `npm run dev`).";
+        }
+
+        throw new Error(errorMessage || "Failed to submit application");
       }
       alert(
         "Thank you for your franchise application! Our team will contact you shortly."

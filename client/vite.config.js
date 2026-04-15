@@ -9,15 +9,16 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
-  const proxyTarget = (env.VITE_API_BASE_URL || `http://localhost:3001`).replace(
-    /\/+$/,
-    ""
-  );
+  const proxyTarget = (
+    env.VITE_PROXY_TARGET ||
+    env.VITE_API_BASE_URL ||
+    "http://localhost:3001"
+  ).replace(/\/+$/, "");
 
   return {
   plugins: [
     // The React and Tailwind plugins are both required for Make, even if
-    // Tailwind is not being actively used – do not remove them
+    // Tailwind is not being actively used - do not remove them
     react(),
     tailwindcss()
   ],
@@ -34,10 +35,6 @@ export default defineConfig(({ mode }) => {
         changeOrigin: true
       },
       "/health": {
-        target: proxyTarget,
-        changeOrigin: true
-      },
-      "/.well-known": {
         target: proxyTarget,
         changeOrigin: true
       }
